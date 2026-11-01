@@ -1,0 +1,1 @@
+{"name":"vsu-potluck-api","version":"1.0.0","private":true,"type":"commonjs","dependencies":{"@azure/data-tables":"^13.3.0","@azure/functions":"^4.6.0"},"engines":{"node":">=20"}}

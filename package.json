@@ -1,0 +1,1 @@
+{"name":"vsu-howard-potluck","version":"1.0.0","private":true,"scripts":{"start":"npx @azure/static-web-apps-cli start public --api-location api","test":"node --test api/test/*.test.js"},"devDependencies":{"@azure/static-web-apps-cli":"^2.0.2"}}
