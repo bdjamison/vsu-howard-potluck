@@ -1,1 +1,36 @@
-{"platform":{"apiRuntime":"node:20"},"routes":[{"route":"/admin.html","allowedRoles":["potluck_approver"]},{"route":"/api/potluck/*/decision","methods":["POST"],"allowedRoles":["potluck_approver"]}],"responseOverrides":{"401":{"redirect":"/.auth/login/aad?post_login_redirect_uri=/admin.html","statusCode":302}},"globalHeaders":{"X-Content-Type-Options":"nosniff","Referrer-Policy":"strict-origin-when-cross-origin","Content-Security-Policy":"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"},"navigationFallback":{"rewrite":"/index.html","exclude":["/api/*","/.auth/*","/assets/*"]}}
+
+{
+  "platform": {
+    "apiRuntime": "node:20"
+  },
+  "routes": [
+    {
+      "route": "/admin.html",
+      "allowedRoles": ["potluck_approver"]
+    },
+    {
+      "route": "/api/potluck/*",
+      "methods": ["POST"],
+      "allowedRoles": ["potluck_approver"]
+    }
+  ],
+  "responseOverrides": {
+    "401": {
+      "redirect": "/.auth/login/aad?post_login_redirect_uri=/admin.html",
+      "statusCode": 302
+    }
+  },
+  "globalHeaders": {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin",
+    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"
+  },
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": [
+      "/api/*",
+      "/.auth/*",
+      "/assets/*"
+    ]
+  }
+}
