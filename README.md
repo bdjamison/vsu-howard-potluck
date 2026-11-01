@@ -51,3 +51,7 @@ Install dependencies at the root and in `api/`, configure `api/local.settings.js
 - Uses `api/src/index.js` as Azure Functions v4 entry point.
 - This package is for replacing source files in the existing GitHub repository. Do not upload the ZIP as a single file.
 - The project has not been deployed to your live Azure app by this update.
+
+
+## Version 1.2 Executive Board dashboard
+Adds live approved and pending attendance totals, additional guest counts (attendees minus registrant), food-serving totals, attendee roster, category progress, and dish-by-dish contributor roster. All reporting is inside the existing role-restricted admin page; no API or storage migration required.
