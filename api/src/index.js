@@ -1,5 +1,5 @@
 const {app}=require('@azure/functions');
-const {TableClient,AzureNamedKeyCredential}=require('@azure/data-tables');
+const {TableClient}=require('@azure/data-tables');
 const crypto=require('node:crypto');
 const {summarize,validate,initialGuests}=require('./core');
 const partition='potluck-2026';
@@ -10,7 +10,7 @@ function principal(req){try{const raw=req.headers.get('x-ms-client-principal');r
 function approver(req){const p=principal(req);return p&&Array.isArray(p.userRoles)&&p.userRoles.includes('potluck_approver')&&p.userId&&p.identityProvider!=='anonymous'?p:null;}
 async function all(c){const result=[];for await(const item of c.listEntities({queryOptions:{filter:`PartitionKey eq '${partition}'`}}))result.push(item);return result;}
 function publicRow(r){return {id:r.rowKey,name:r.name,dish:r.dish,category:r.category,servings:r.servings,status:r.status,createdAt:r.createdAt};}
-function privateRow(r){return {...publicRow(r),phone:r.phone,adults:r.adults,children:r.children,notes:r.notes,verifiedBy:r.verifiedBy||'',verifiedAt:r.verifiedAt||'',approvedBy:r.approvedBy||'',approvedAt:r.approvedAt||'',decisionNote:r.decisionNote||'',updatedAt:r.updatedAt||''};}
+function privateRow(r){return {...publicRow(r),phone:r.phone,email:r.email,attendees:r.attendees,notes:r.notes,verifiedBy:r.verifiedBy||'',verifiedAt:r.verifiedAt||'',approvedBy:r.approvedBy||'',approvedAt:r.approvedAt||'',decisionNote:r.decisionNote||'',updatedAt:r.updatedAt||''};}
 async function list(req){try{const rows=await all(await setup());const isAdmin=!!approver(req);return json({categories:summarize(rows),guests:initialGuests,contributions:rows.filter(r=>r.status==='approved').sort((a,b)=>a.createdAt.localeCompare(b.createdAt)).map(publicRow),...(isAdmin?{submissions:rows.sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(privateRow)}:{})});}catch(e){return json({error:'Unable to load contributions'},500)}}
 app.http('list',{methods:['GET'],authLevel:'anonymous',route:'potluck',handler:list});
 async function signup(req){try{const raw=await req.json();if(raw.website)return json({ok:true});const data=validate(raw);const c=await setup();const now=new Date().toISOString();const rowKey=crypto.randomUUID();await c.createEntity({partitionKey:partition,rowKey,...data,status:'pending',createdAt:now,updatedAt:now});return json({ok:true,id:rowKey,status:'pending'},201);}catch(e){return json({error:e.message==='Storage is not configured'?'Service unavailable':e.message||'Unable to submit'},e.message==='Storage is not configured'?503:400)}}

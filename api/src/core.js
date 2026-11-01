@@ -10,5 +10,29 @@ const categories=[
 const initialGuests=40;
 function targets(guests=initialGuests){return categories.map(c=>({...c,target:Math.ceil(guests*c.ratio)}));}
 function summarize(rows,guests=initialGuests){return targets(guests).map(c=>{const approved=rows.filter(r=>r.category===c.id&&r.status==='approved').reduce((n,r)=>n+Number(r.servings||0),0);const pending=rows.filter(r=>r.category===c.id&&r.status==='pending').reduce((n,r)=>n+Number(r.servings||0),0);return {...c,approved,pending,shortage:Math.max(0,c.target-approved)};});}
-function validate(input){if(!input||typeof input!=='object')throw Error('Invalid submission');const name=String(input.name||'').trim(),phone=String(input.phone||'').trim(),dish=String(input.dish||'').trim(),category=String(input.category||'');const servings=Number(input.servings),adults=Number(input.adults),children=Number(input.children||0);if(name.length<2||name.length>100)throw Error('Enter a valid name');if(!/^\+?[\d\s().-]{10,22}$/.test(phone)||phone.replace(/\D/g,'').length<10)throw Error('Enter a valid mobile number');if(!categories.some(c=>c.id===category))throw Error('Select a valid category');if(dish.length<2||dish.length>160)throw Error('Enter a dish description');if(!Number.isInteger(servings)||servings<1||servings>500)throw Error('Servings must be between 1 and 500');if(!Number.isInteger(adults)||adults<0||adults>50||!Number.isInteger(children)||children<0||children>50||adults+children<1)throw Error('Enter attendees (at least one)');const notes=String(input.notes||'').trim().slice(0,500);return {name,phone,dish,category,servings,adults,children,notes};}
-module.exports={categories,targets,summarize,validate,initialGuests};
+function normalizeMobile(value){
+ let digits=String(value||'').replace(/\D/g,'');
+ if(digits.length===11&&digits.startsWith('1'))digits=digits.slice(1);
+ if(!/^[2-9]\d{2}[2-9]\d{6}$/.test(digits))throw Error('Enter a valid 10-digit U.S. mobile number');
+ return `${digits.slice(0,3)}-${digits.slice(3,6)}-${digits.slice(6)}`;
+}
+function validate(input){
+ if(!input||typeof input!=='object'||Array.isArray(input))throw Error('Invalid submission');
+ const name=String(input.name||'').trim();
+ const email=String(input.email||'').trim().toLowerCase();
+ const phone=normalizeMobile(input.phone);
+ const dish=String(input.dish||'').trim();
+ const category=String(input.category||'');
+ const servings=Number(input.servings);
+ const attendees=Number(input.attendees);
+ if(name.length<2||name.length>100)throw Error('Enter a valid name');
+ if(email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw Error('Enter a valid email address');
+ if(!categories.some(c=>c.id===category))throw Error('Select a valid category');
+ if(dish.length<2||dish.length>160)throw Error('Enter a dish description');
+ if(!Number.isInteger(servings)||servings<1||servings>500)throw Error('Servings must be between 1 and 500');
+ if(!Number.isInteger(attendees)||attendees<1||attendees>50)throw Error('Attendees must be between 1 and 50');
+ const notes=String(input.notes||'').trim().slice(0,500);
+ return {name,email,phone,dish,category,servings,attendees,notes};
+}
+
+module.exports={categories,targets,summarize,validate,normalizeMobile,initialGuests};

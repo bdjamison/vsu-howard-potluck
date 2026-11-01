@@ -1,4 +1,3 @@
-
 {
   "platform": {
     "apiRuntime": "node:20"
@@ -6,12 +5,28 @@
   "routes": [
     {
       "route": "/admin.html",
-      "allowedRoles": ["potluck_approver"]
+      "allowedRoles": [
+        "potluck_approver"
+      ]
+    },
+    {
+      "route": "/api/potluck/signup",
+      "methods": [
+        "POST"
+      ],
+      "allowedRoles": [
+        "anonymous",
+        "authenticated"
+      ]
     },
     {
       "route": "/api/potluck/*",
-      "methods": ["POST"],
-      "allowedRoles": ["potluck_approver"]
+      "methods": [
+        "POST"
+      ],
+      "allowedRoles": [
+        "potluck_approver"
+      ]
     }
   ],
   "responseOverrides": {
@@ -23,7 +38,7 @@
   "globalHeaders": {
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"
+    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'"
   },
   "navigationFallback": {
     "rewrite": "/index.html",

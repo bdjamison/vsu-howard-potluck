@@ -41,3 +41,13 @@ Install dependencies at the root and in `api/`, configure `api/local.settings.js
 
 ## Architecture
 `public/` HTML/CSS/JS, `api/` Azure Functions v4 (Node 20), Azure Table Storage, `.github/workflows/` GitHub Actions deployment.
+
+
+## Version 1.1 update
+- Required email and validated U.S. mobile number; contact data is visible only to authorized approvers.
+- One attendee count, no separate child count.
+- Food targets are advisory and may be exceeded.
+- Public POST signup is explicitly allowed; decision POST routes require `potluck_approver`, with additional backend role enforcement.
+- Uses `api/src/index.js` as Azure Functions v4 entry point.
+- This package is for replacing source files in the existing GitHub repository. Do not upload the ZIP as a single file.
+- The project has not been deployed to your live Azure app by this update.

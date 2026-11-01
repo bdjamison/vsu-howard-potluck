@@ -1,4 +1,11 @@
-const {test}=require('node:test'),assert=require('node:assert/strict');const {targets,summarize,validate}=require('../src/core');
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {targets,summarize,validate}=require('../src/core');
+const good={name:'Test Guest',email:'TEST@example.com',phone:'(301) 555-1212',dish:'Chicken',category:'protein',servings:55,attendees:1};
 test('40-attendee targets',()=>assert.deepEqual(targets().map(x=>x.target),[40,40,32,20,32,60,28]));
 test('pending does not count as confirmed',()=>{const s=summarize([{category:'protein',servings:20,status:'pending'},{category:'protein',servings:10,status:'approved'}]);assert.equal(s[0].approved,10);assert.equal(s[0].pending,20);assert.equal(s[0].shortage,30)});
-test('rejects invalid categories',()=>assert.throws(()=>validate({name:'Test User',phone:'3015551212',dish:'Chicken',category:'fake',servings:10,adults:1}),/category/));
+test('above-goal servings accepted',()=>{assert.equal(validate(good).servings,55);const s=summarize([{category:'protein',servings:55,status:'approved'}]);assert.equal(s[0].shortage,0);assert.equal(s[0].approved,55)});
+test('normalizes contact info',()=>{const v=validate(good);assert.equal(v.email,'test@example.com');assert.equal(v.phone,'301-555-1212');assert.equal(v.attendees,1)});
+test('rejects invalid email',()=>assert.throws(()=>validate({...good,email:'not-an-email'}),/email/));
+test('rejects invalid mobile',()=>assert.throws(()=>validate({...good,phone:'123'}),/mobile/));
+test('rejects invalid attendees',()=>assert.throws(()=>validate({...good,attendees:0}),/Attendees/));
+test('rejects invalid category',()=>assert.throws(()=>validate({...good,category:'fake'}),/category/));
