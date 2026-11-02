@@ -1,15 +1,22 @@
 const categories=[
- {id:'protein',name:'Protein / Main Dish',icon:'🍗',ratio:1,unit:'servings'},
- {id:'starch',name:'Starches',icon:'🥔',ratio:1,unit:'servings'},
- {id:'vegetable',name:'Vegetables',icon:'🥦',ratio:.8,unit:'servings'},
- {id:'fruit',name:'Fruit',icon:'🍓',ratio:.5,unit:'servings'},
- {id:'side',name:'Other Sides',icon:'🥗',ratio:.8,unit:'servings'},
- {id:'drink',name:'Drinks',icon:'🥤',ratio:1.5,unit:'drinks'},
- {id:'dessert',name:'Desserts',icon:'🍰',ratio:.7,unit:'servings'}
+ {id:'protein',name:'Protein / Main Dish',icon:'🍗',target:5,range:'5 or more'},
+ {id:'starch',name:'Starches',icon:'🥔',target:3,range:'3–4 or more'},
+ {id:'vegetable',name:'Vegetables',icon:'🥦',target:4,range:'4–5 or more'},
+ {id:'fruit',name:'Fruit',icon:'🍓',target:3,range:'3 or more'},
+ {id:'side',name:'Other Sides',icon:'🥗',target:5,range:'5 or more'},
+ {id:'drink',name:'Drinks',icon:'🥤',target:3,range:'3 or more'},
+ {id:'dessert',name:'Desserts',icon:'🍰',target:3,range:'3 or more'}
 ];
 const initialGuests=40;
-function targets(guests=initialGuests){return categories.map(c=>({...c,target:Math.ceil(guests*c.ratio)}));}
-function summarize(rows,guests=initialGuests){return targets(guests).map(c=>{const approved=rows.filter(r=>r.category===c.id&&r.status==='approved').reduce((n,r)=>n+Number(r.servings||0),0);const pending=rows.filter(r=>r.category===c.id&&r.status==='pending').reduce((n,r)=>n+Number(r.servings||0),0);return {...c,approved,pending,shortage:Math.max(0,c.target-approved)};});}
+function targets(){return categories.map(c=>({...c,unit:'contributors'}));}
+function summarize(rows){return targets().map(c=>{
+ const approvedRows=rows.filter(r=>r.category===c.id&&r.status==='approved');
+ const pendingRows=rows.filter(r=>r.category===c.id&&r.status==='pending');
+ const approved=approvedRows.length,pending=pendingRows.length;
+ const approvedServings=approvedRows.reduce((n,r)=>n+Number(r.servings||0),0);
+ const pendingServings=pendingRows.reduce((n,r)=>n+Number(r.servings||0),0);
+ return {...c,approved,pending,approvedServings,pendingServings,shortage:Math.max(0,c.target-approved)};
+});}
 function normalizeMobile(value){
  let digits=String(value||'').replace(/\D/g,'');
  if(digits.length===11&&digits.startsWith('1'))digits=digits.slice(1);

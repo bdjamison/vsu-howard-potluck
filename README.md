@@ -1,3 +1,11 @@
+# VSU Trojans Gather — Version 1.3
+
+Food planning is based on the **number of approved contributors**, not the number of servings. For a 40-person event, minimum contributors: protein/main 5, starch 3 (ideal 3–4), vegetables 4 (ideal 4–5), fruit 3, sides 5, drinks 3, desserts 3. These are not maximums.
+
+Each guest is prompted to plan their contribution with the 40-person gathering in mind; the default portions field is 40 but smaller contributions are allowed because several people may bring items in the same category. Portions are still collected and visible in the Executive Board summary. Pending contributions do not count toward confirmed contributor targets.
+
+Deployment: upload the included files to the existing GitHub repository, preserve existing Azure environment variables, and wait for GitHub Actions. No storage migration is needed.
+
 # Trojans Gather — VSU Howard County Holiday Potluck
 
 A standalone Azure Static Web App for the Virginia State University Alumni Association, Howard County, Maryland Chapter.
@@ -53,5 +61,5 @@ Install dependencies at the root and in `api/`, configure `api/local.settings.js
 - The project has not been deployed to your live Azure app by this update.
 
 
-## Version 1.2 Executive Board dashboard
+## Version 1.3 Executive Board dashboard
 Adds live approved and pending attendance totals, additional guest counts (attendees minus registrant), food-serving totals, attendee roster, category progress, and dish-by-dish contributor roster. All reporting is inside the existing role-restricted admin page; no API or storage migration required.

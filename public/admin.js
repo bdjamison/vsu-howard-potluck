@@ -24,9 +24,9 @@ function renderOverview(rows){
  for(const r of active){const tr=el('tr');const n=Number(r.attendees)||1;for(const value of [r.name,Math.max(0,n-1),n,`${r.dish} (${r.servings})`,r.status])tr.append(el('td','',value));attendeeBody.append(tr)}
  const food=$('foodOverview');food.replaceChildren();
  for(const c of data.categories||[]){const a=Number(c.approved)||0, p=Number(c.pending)||0, t=Number(c.target)||0;
-  const card=el('div','food-category');card.append(el('strong','',`${c.icon||''} ${c.name}`),el('p','',`${a} approved / ${t} target • ${p} pending`));
+  const card=el('div','food-category');card.append(el('strong','',`${c.icon||''} ${c.name}`),el('p','',`${a} approved contributor(s) / ${t} minimum • ${p} pending`),el('p','hint',`${c.approvedServings||0} approved portions • ${c.pendingServings||0} pending portions`));
   const track=el('div','board-track'),fill=el('div','board-fill');fill.style.width=`${t?Math.min(100,a/t*100):0}%`;track.append(fill);card.append(track);
-  card.append(el('small','',a>t?`${a-t} above target — additional contributions welcome`:a===t?'Target met — additional contributions welcome':`${t-a} more servings suggested`));food.append(card);
+  card.append(el('small','',a>t?`${a-t} additional contributor(s) — more welcome`:a===t?'Contributor goal met — more welcome':`${t-a} more contributor(s) suggested`));food.append(card);
  }
  const foodBody=$('foodRows');foodBody.replaceChildren();
  if(!active.length){const tr=el('tr'),td=el('td','','No food commitments yet.');td.colSpan=5;tr.append(td);foodBody.append(tr)}
