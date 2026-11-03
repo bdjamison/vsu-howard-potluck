@@ -12,7 +12,7 @@ function targets(){return categories.map(c=>({...c,unit:'contributors'}));}
 function summarize(rows){return targets().map(c=>{
  const approvedRows=rows.filter(r=>r.category===c.id&&r.status==='approved');
  const pendingRows=rows.filter(r=>r.category===c.id&&r.status==='pending');
- const approved=approvedRows.length,pending=pendingRows.length;
+ const approved=new Set(approvedRows.map(r=>r.guestId||r.email||r.rowKey)).size,pending=new Set(pendingRows.map(r=>r.guestId||r.email||r.rowKey)).size;
  const approvedServings=approvedRows.reduce((n,r)=>n+Number(r.servings||0),0);
  const pendingServings=pendingRows.reduce((n,r)=>n+Number(r.servings||0),0);
  return {...c,approved,pending,approvedServings,pendingServings,shortage:Math.max(0,c.target-approved)};
@@ -37,9 +37,9 @@ function validate(input){
  if(!categories.some(c=>c.id===category))throw Error('Select a valid category');
  if(dish.length<2||dish.length>160)throw Error('Enter a dish description');
  if(!Number.isInteger(servings)||servings<1||servings>500)throw Error('Servings must be between 1 and 500');
- if(!Number.isInteger(attendees)||attendees<1||attendees>50)throw Error('Attendees must be between 1 and 50');
+ if(input.mode!=='existing'&&(!Number.isInteger(attendees)||attendees<1||attendees>50))throw Error('Attendees must be between 1 and 50');
  const notes=String(input.notes||'').trim().slice(0,500);
- return {name,email,phone,dish,category,servings,attendees,notes};
+ return {name,email,phone,dish,category,servings,attendees:input.mode==='existing'?undefined:attendees,notes};
 }
 
 module.exports={categories,targets,summarize,validate,normalizeMobile,initialGuests};

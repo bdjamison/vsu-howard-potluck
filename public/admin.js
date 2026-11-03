@@ -5,8 +5,9 @@ async function decide(row,action,textConfirmed=false){if(action==='approve'&&!te
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.className=x===b?'active':'secondary');render()});$('search').addEventListener('input',()=>data&&render());refresh();
 
 function renderOverview(rows){
- const approved=rows.filter(r=>r.status==='approved');
- const pending=rows.filter(r=>r.status==='pending');
+ const roster=data.roster||[];
+ const approved=roster.filter(r=>r.status==='approved');
+ const pending=roster.filter(r=>r.status==='pending');
  const total=arr=>arr.reduce((sum,r)=>sum+(Number(r.attendees)||1),0);
  const guests=arr=>arr.reduce((sum,r)=>sum+Math.max(0,(Number(r.attendees)||1)-1),0);
  const servings=arr=>arr.reduce((sum,r)=>sum+(Number(r.servings)||0),0);
@@ -15,13 +16,13 @@ function renderOverview(rows){
  for(const [label,value] of [
   ['Confirmed people',total(approved)],['Approved RSVPs',approved.length],
   ['Additional guests',guests(approved)],['Pending people',total(pending)],
-  ['Approved food servings',servings(approved)],['Pending food servings',servings(pending)]
+  ['Approved food servings',servings(rows.filter(r=>r.status==='approved'))],['Pending food servings',servings(rows.filter(r=>r.status==='pending'))]
  ]){const tile=el('div','board-tile');tile.append(el('b','',value),el('span','',label));tiles.append(tile)}
  summary.append(tiles);
  const attendeeBody=$('attendeeRows');attendeeBody.replaceChildren();
- const active=rows.filter(r=>['approved','pending'].includes(r.status)).sort((a,b)=>a.name.localeCompare(b.name));
+ const active=roster.sort((a,b)=>a.name.localeCompare(b.name));
  if(!active.length){const tr=el('tr');const td=el('td','', 'No registrations yet.');td.colSpan=5;tr.append(td);attendeeBody.append(tr)}
- for(const r of active){const tr=el('tr');const n=Number(r.attendees)||1;for(const value of [r.name,Math.max(0,n-1),n,`${r.dish} (${r.servings})`,r.status])tr.append(el('td','',value));attendeeBody.append(tr)}
+ for(const r of active){const tr=el('tr');const n=Number(r.attendees)||1;for(const value of [r.name,Math.max(0,n-1),n,r.contributions.map(c=>c.dish+' ('+c.servings+')').join('; '),r.status])tr.append(el('td','',value));attendeeBody.append(tr)}
  const food=$('foodOverview');food.replaceChildren();
  for(const c of data.categories||[]){const a=Number(c.approved)||0, p=Number(c.pending)||0, t=Number(c.target)||0;
   const card=el('div','food-category');card.append(el('strong','',`${c.icon||''} ${c.name}`),el('p','',`${a} approved contributor(s) / ${t} minimum • ${p} pending`),el('p','hint',`${c.approvedServings||0} approved portions • ${c.pendingServings||0} pending portions`));
@@ -29,6 +30,7 @@ function renderOverview(rows){
   card.append(el('small','',a>t?`${a-t} additional contributor(s) — more welcome`:a===t?'Contributor goal met — more welcome':`${t-a} more contributor(s) suggested`));food.append(card);
  }
  const foodBody=$('foodRows');foodBody.replaceChildren();
- if(!active.length){const tr=el('tr'),td=el('td','','No food commitments yet.');td.colSpan=5;tr.append(td);foodBody.append(tr)}
- for(const r of active){const tr=el('tr');const category=(data.categories||[]).find(c=>c.id===r.category);for(const value of [r.name,category?.name||r.category,r.dish,r.servings,r.status])tr.append(el('td','',value));foodBody.append(tr)}
+ const activeContributions=rows.filter(r=>['approved','pending'].includes(r.status));
+ if(!activeContributions.length){const tr=el('tr'),td=el('td','','No food commitments yet.');td.colSpan=5;tr.append(td);foodBody.append(tr)}
+ for(const r of activeContributions){const tr=el('tr');const category=(data.categories||[]).find(c=>c.id===r.category);for(const value of [r.name,category?.name||r.category,r.dish,r.servings,r.status])tr.append(el('td','',value));foodBody.append(tr)}
 }

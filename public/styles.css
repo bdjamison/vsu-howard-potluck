@@ -27,3 +27,5 @@ main{width:100%;max-width:none;margin:20px auto;padding:0 24px 50px}
 .board-track{height:7px;background:#e8eef8;border-radius:10px;overflow:hidden;margin:7px 0}.board-fill{height:100%;background:#21835b;border-radius:10px}
 @media(max-width:1100px){.board-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.food-overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:550px){.board-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.food-overview{grid-template-columns:1fr}}
+
+.registration-mode{border:1px solid #d8e0ed;border-radius:10px;padding:12px;margin:0 0 12px}.registration-mode legend{font-weight:700}.registration-mode label{display:block;margin:6px 0;font-weight:400}.registration-mode input[type=radio]{width:auto;margin-right:7px}#codeBox[hidden],#codeResult[hidden]{display:none}#codeResult{margin-top:12px;overflow-wrap:anywhere}#codeResult strong{font-size:1.1rem;color:#173c88}

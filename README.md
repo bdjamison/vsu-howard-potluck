@@ -63,3 +63,13 @@ Install dependencies at the root and in `api/`, configure `api/local.settings.js
 
 ## Version 1.3 Executive Board dashboard
 Adds live approved and pending attendance totals, additional guest counts (attendees minus registrant), food-serving totals, attendee roster, category progress, and dish-by-dish contributor roster. All reporting is inside the existing role-restricted admin page; no API or storage migration required.
+
+
+## Version 1.5 — Unique attendee registration and multiple contributions
+- First registration creates one private attendee group keyed by normalized email and returns a 12-character registration code. **Save it immediately; it is not sent by email.**
+- Returning guests select **Yes — Add another dish**, provide the same email and their registration code. This adds a food contribution without another RSVP.
+- Board attendance totals are based on unique attendee groups, not contribution rows. A group is confirmed when at least one contribution is approved. Additional dishes remain subject to approval.
+- Category counts use distinct contributors within each category. Multiple dishes in the same category count as one category contributor.
+- **Existing data:** v1.4 contributions are grouped by email for board attendance and category counts. They do not have registration codes; contact the organizer to reconcile existing records, or clear test records before launch.
+- **Security:** Registration codes are stored as SHA-256 hashes. Code is only shown once on initial signup. No email/SMS delivery or self-service recovery is implemented.
+- **Caveat:** If creating the first food contribution fails after creating the registration record, the guest will need organizer assistance. Avoid deploying without a test of the Azure Table service.
