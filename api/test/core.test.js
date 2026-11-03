@@ -13,3 +13,5 @@ test('rejects invalid attendees',()=>assert.throws(()=>validate({...valid,attend
 test('rejects invalid category',()=>assert.throws(()=>validate({...valid,category:'other'})));
 
 test('same guest bringing two dishes in one category counts once',()=>{const c=summarize([{guestId:'g1',category:'protein',status:'approved',servings:40},{guestId:'g1',category:'protein',status:'approved',servings:20}])[0];assert.equal(c.approved,1);assert.equal(c.approvedServings,60)});
+
+test('returning registrant still supplies valid attendee count',()=>assert.throws(()=>validate({...valid,attendees:0,mode:'existing'})));

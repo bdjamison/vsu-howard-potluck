@@ -5,8 +5,6 @@ const {summarize,validate,initialGuests}=require('./core');
 const partition='potluck-2026';
 const guestPartition='potluck-guests-2026';
 const guestKey=email=>'g-'+crypto.createHash('sha256').update(email).digest('hex');
-const codeHash=code=>crypto.createHash('sha256').update(code).digest('hex');
-const safeEqual=(a,b)=>{const x=Buffer.from(String(a||''),'hex'),y=Buffer.from(String(b||''),'hex');return x.length===y.length&&x.length===32&&crypto.timingSafeEqual(x,y)};
 function client(){const connection=process.env.AZURE_STORAGE_CONNECTION_STRING;if(!connection)throw Error('Storage is not configured');return TableClient.fromConnectionString(connection,'PotluckSignups');}
 async function setup(){const c=client();await c.createTable().catch(e=>{if(e.statusCode!==409)throw e});return c;}
 function json(data,status=200){return {status,jsonBody:data,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}};}
@@ -23,25 +21,21 @@ async function list(req){try{const c=await setup();const rows=await all(c);const
 app.http('list',{methods:['GET'],authLevel:'anonymous',route:'potluck',handler:list});
 async function signup(req){try{
  const raw=await req.json();if(raw.website)return json({ok:true});
- const mode=raw.mode==='existing'?'existing':'new';
- const data=validate({...raw,mode});const c=await setup();
+ const data=validate(raw);const c=await setup();
  const key=guestKey(data.email);let guest=null;
  try{guest=await c.getEntity(guestPartition,key)}catch(e){if(e.statusCode!==404)throw e}
- let registrationCode=null;
- if(mode==='existing'){
-  if(!guest)return json({error:'Registration not found. Please register as a new guest.'},404);
-  if(!/^[A-Z0-9]{12}$/.test(String(raw.registrationCode||'').toUpperCase())||!safeEqual(guest.codeHash,codeHash(String(raw.registrationCode).toUpperCase())))return json({error:'Incorrect registration code'},403);
- }else{
-  if(guest)return json({error:'This email is already registered. Select Already registered and enter your registration code.'},409);
-  registrationCode=crypto.randomBytes(9).toString('base64url').replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,12);
+ // Email is the attendance identity. Existing registrations are never overwritten
+ // by an unverified submission, and duplicate food entries do not add attendees.
+ if(!guest){
   const now=new Date().toISOString();
-  try{await c.createEntity({partitionKey:guestPartition,rowKey:key,name:data.name,email:data.email,phone:data.phone,attendees:data.attendees,codeHash:codeHash(registrationCode),createdAt:now,updatedAt:now})}
-  catch(e){if(e.statusCode===409)return json({error:'This email is already registered. Select Already registered.'},409);throw e}
+  try{await c.createEntity({partitionKey:guestPartition,rowKey:key,name:data.name,email:data.email,phone:data.phone,attendees:data.attendees,createdAt:now,updatedAt:now})}
+  catch(e){if(e.statusCode!==409)throw e}
+  guest=await c.getEntity(guestPartition,key);
  }
  const now=new Date().toISOString(),rowKey=crypto.randomUUID();
  const {name,email,phone,dish,category,servings,notes}=data;
- await c.createEntity({partitionKey:partition,rowKey,guestId:key,name:guest?.name||name,email,phone:guest?.phone||phone,dish,category,servings,attendees:guest?.attendees||data.attendees,notes,status:'pending',createdAt:now,updatedAt:now});
- return json({ok:true,id:rowKey,status:'pending',...(registrationCode?{registrationCode}:{})},201);
+ await c.createEntity({partitionKey:partition,rowKey,guestId:key,name:guest.name,email,phone:guest.phone,dish,category,servings,attendees:guest?.attendees||data.attendees,notes,status:'pending',createdAt:now,updatedAt:now});
+ return json({ok:true,id:rowKey,status:'pending'},201);
  }catch(e){return json({error:e.message==='Storage is not configured'?'Service unavailable':e.message||'Unable to submit'},e.message==='Storage is not configured'?503:400)}
 }
 app.http('signup',{methods:['POST'],authLevel:'anonymous',route:'potluck/signup',handler:signup});

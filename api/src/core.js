@@ -37,9 +37,9 @@ function validate(input){
  if(!categories.some(c=>c.id===category))throw Error('Select a valid category');
  if(dish.length<2||dish.length>160)throw Error('Enter a dish description');
  if(!Number.isInteger(servings)||servings<1||servings>500)throw Error('Servings must be between 1 and 500');
- if(input.mode!=='existing'&&(!Number.isInteger(attendees)||attendees<1||attendees>50))throw Error('Attendees must be between 1 and 50');
+ if(!Number.isInteger(attendees)||attendees<1||attendees>50)throw Error('Attendees must be between 1 and 50');
  const notes=String(input.notes||'').trim().slice(0,500);
- return {name,email,phone,dish,category,servings,attendees:input.mode==='existing'?undefined:attendees,notes};
+ return {name,email,phone,dish,category,servings,attendees,notes};
 }
 
 module.exports={categories,targets,summarize,validate,normalizeMobile,initialGuests};
