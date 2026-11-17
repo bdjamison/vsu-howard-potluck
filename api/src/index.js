@@ -2,8 +2,28 @@ const {app}=require('@azure/functions');
 const {TableClient}=require('@azure/data-tables');
 const crypto=require('node:crypto');
 const {summarize,validate,initialGuests}=require('./core');
-const partition='potluck-2026';
-const guestPartition='potluck-guests-2026';
+const DEFAULT_EVENT = 'vsu-holiday-2026';
+
+function getEventPartitions(eventId = DEFAULT_EVENT) {
+  if (eventId === 'vsu-holiday-2026') {
+    return {
+      partition: 'potluck-2026',
+      guestPartition: 'potluck-guests-2026'
+    };
+  }
+
+  if (eventId === 'kpl-holiday-2026') {
+    return {
+      partition: 'potluck-kpl-holiday-2026',
+      guestPartition: 'potluck-guests-kpl-holiday-2026'
+    };
+  }
+
+  throw new Error('Unknown event');
+}
+
+const { partition, guestPartition } =
+  getEventPartitions(DEFAULT_EVENT);
 const guestKey=email=>'g-'+crypto.createHash('sha256').update(email).digest('hex');
 function client(){const connection=process.env.AZURE_STORAGE_CONNECTION_STRING;if(!connection)throw Error('Storage is not configured');return TableClient.fromConnectionString(connection,'PotluckSignups');}
 async function setup(){const c=client();await c.createTable().catch(e=>{if(e.statusCode!==409)throw e});return c;}
