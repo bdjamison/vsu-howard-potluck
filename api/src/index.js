@@ -31,8 +31,15 @@ function json(data,status=200){return {status,jsonBody:data,headers:{'Cache-Cont
 function principal(req){try{const raw=req.headers.get('x-ms-client-principal');return raw?JSON.parse(Buffer.from(raw,'base64').toString('utf8')):null;}catch{return null;}}
 function approver(req){const p=principal(req);return p&&Array.isArray(p.userRoles)&&p.userRoles.includes('potluck_approver')&&p.userId&&p.identityProvider!=='anonymous'?p:null;}
 async function rowsFor(c,key){const result=[];for await(const item of c.listEntities({queryOptions:{filter:`PartitionKey eq '${key}'`}}))result.push(item);return result;}
-async function all(c){return rowsFor(c,partition);}
-async function guestsFor(c){return rowsFor(c,guestPartition);}
+async function all(c, eventId = DEFAULT_EVENT) {
+  const { partition } = getEventPartitions(eventId);
+  return rowsFor(c, partition);
+}
+
+async function guestsFor(c, eventId = DEFAULT_EVENT) {
+  const { guestPartition } = getEventPartitions(eventId);
+  return rowsFor(c, guestPartition);
+}
 function attendanceSummary(rows,guests){const active=rows.filter(r=>['approved','pending'].includes(r.status));const grouped=new Map();for(const r of active){const key=r.guestId||guestKey(String(r.email||r.rowKey).toLowerCase());const existing=grouped.get(key);if(!existing)grouped.set(key,{guestId:key,name:r.name,email:r.email,phone:r.phone,attendees:Number(r.attendees)||1,status:r.status,contributions:[]});const g=grouped.get(key);g.contributions.push({id:r.rowKey,dish:r.dish,category:r.category,servings:r.servings,status:r.status});if(r.status==='approved')g.status='approved';}
 for(const g of grouped.values()){const record=guests.find(x=>x.rowKey===g.guestId);if(record){g.name=record.name;g.email=record.email;g.phone=record.phone;g.attendees=Number(record.attendees)||1;}}return [...grouped.values()];}
 function publicRow(r){return {id:r.rowKey,name:r.name,dish:r.dish,category:r.category,servings:r.servings,status:r.status,createdAt:r.createdAt};}
