@@ -1,0 +1,6 @@
+.kpl-branding{display:none;align-items:center;justify-content:center;gap:clamp(12px,3vw,36px);margin:0 auto 14px;max-width:450px}
+body.kpl-event .kpl-branding{display:flex}
+.kpl-branding img{display:block;object-fit:contain;max-width:100%;height:auto}
+.kpl-branding .kpl-crest{width:clamp(80px,11vw,142px);max-height:160px}
+.kpl-branding .kpl-seal{width:clamp(82px,12vw,145px);max-height:150px;background:#fff;border-radius:6px;padding:4px;box-sizing:border-box}
+@media(max-width:520px){.kpl-branding{gap:14px;margin-bottom:12px}.kpl-branding .kpl-crest{width:86px}.kpl-branding .kpl-seal{width:92px}}

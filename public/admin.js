@@ -1,4 +1,3 @@
-
 const $ = id => document.getElementById(id);
 
 const EVENTS = {
@@ -271,6 +270,7 @@ function render() {
 
     records.append(box);
   }
+
 }
 
 async function decide(row, action, textConfirmed = false) {
