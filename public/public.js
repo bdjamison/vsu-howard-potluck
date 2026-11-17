@@ -56,11 +56,9 @@ function applyEvent() {
     event.organization;
 
   header.querySelector('h1').textContent = event.title;
-  paragraphs[0].textContent = event.subtitle;
-  paragraphs[1].replaceChildren(
-    el('strong', '', event.date)
-  );
-  paragraphs[2].textContent = event.location;
+  if (paragraphs[0]) paragraphs[0].textContent = event.subtitle;
+  if (paragraphs[1]) paragraphs[1].replaceChildren(el('strong', '', event.date));
+  if (paragraphs[2]) paragraphs[2].textContent = event.location;
 
   header.style.backgroundColor = event.primary;
   header.style.borderBottom =
@@ -77,6 +75,8 @@ function applyEvent() {
     'are shown separately.';
 
   $('servings').value = String(event.attendees);
+  const servingHint = document.querySelector('#servings')?.nextElementSibling;
+  if (servingHint) servingHint.textContent = `${event.attendees} is a planning suggestion, not a requirement. Coordinate quantities based on your dish.`;
 
   const footer = document.querySelector('footer');
   if (footer) footer.textContent = event.footer;
@@ -91,10 +91,9 @@ function applyEvent() {
 
   if (eventId === 'kpl-holiday-2026') {
     const note = document.querySelector('.note');
-    if (note) {
-      note.textContent =
-        'Questions? Contact your chapter event organizer.';
-    }
+    if (note) note.textContent = 'Questions? Contact your chapter event organizer.';
+    const verification = document.querySelector('#signup')?.previousElementSibling;
+    if (verification) verification.textContent = 'Your signup will be reviewed by the chapter organizer. You will receive a text to confirm before approval.';
   }
 
   return true;
@@ -315,6 +314,8 @@ if (applyEvent()) {
       $('dish').value = '';
       $('notes').value = '';
       $('servings').value = String(event.attendees);
+  const servingHint = document.querySelector('#servings')?.nextElementSibling;
+  if (servingHint) servingHint.textContent = `${event.attendees} is a planning suggestion, not a requirement. Coordinate quantities based on your dish.`;
 
       await load();
 

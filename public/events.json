@@ -1,4 +1,3 @@
-
 {
   "events": [
     {
@@ -33,12 +32,40 @@
     }
   ],
   "foodCategories": [
-    { "id": "protein", "name": "Protein / Main Dish", "targetContributors": 5 },
-    { "id": "starches", "name": "Starches", "targetContributors": 3 },
-    { "id": "vegetables", "name": "Vegetables", "targetContributors": 4 },
-    { "id": "fruit", "name": "Fruit", "targetContributors": 3 },
-    { "id": "sides", "name": "Other Sides", "targetContributors": 5 },
-    { "id": "drinks", "name": "Drinks", "targetContributors": 3 },
-    { "id": "desserts", "name": "Desserts", "targetContributors": 3 }
+    {
+      "id": "protein",
+      "name": "Protein / Main Dish",
+      "targetContributors": 5
+    },
+    {
+      "id": "starch",
+      "name": "Starches",
+      "targetContributors": 3
+    },
+    {
+      "id": "vegetable",
+      "name": "Vegetables",
+      "targetContributors": 4
+    },
+    {
+      "id": "fruit",
+      "name": "Fruit",
+      "targetContributors": 3
+    },
+    {
+      "id": "side",
+      "name": "Other Sides",
+      "targetContributors": 5
+    },
+    {
+      "id": "drink",
+      "name": "Drinks",
+      "targetContributors": 3
+    },
+    {
+      "id": "dessert",
+      "name": "Desserts",
+      "targetContributors": 3
+    }
   ]
 }
