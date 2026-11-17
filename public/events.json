@@ -1,0 +1,44 @@
+
+{
+  "events": [
+    {
+      "id": "vsu-holiday-2026",
+      "organization": "Virginia State University Alumni Association - Howard County, MD",
+      "title": "Trojans Gather",
+      "subtitle": "Holiday Potluck 2026",
+      "date": "2026-12-13",
+      "startTime": "15:00",
+      "endTime": "18:00",
+      "location": "Merriweather Pavilion Area - Detailed address shared privately",
+      "expectedAttendees": 40,
+      "theme": {
+        "primary": "#173C86",
+        "secondary": "#F47920"
+      }
+    },
+    {
+      "id": "kpl-holiday-2026",
+      "organization": "Alpha Phi Alpha Fraternity, Inc. - Kappa Phi Lambda Chapter",
+      "title": "Kappa Phi Lambda Holiday Dinner",
+      "subtitle": "Holiday Dinner 2026",
+      "date": "2026-12-19",
+      "startTime": "17:00",
+      "endTime": "21:00",
+      "location": "The Sheppard's Home",
+      "expectedAttendees": 50,
+      "theme": {
+        "primary": "#111111",
+        "secondary": "#C5A253"
+      }
+    }
+  ],
+  "foodCategories": [
+    { "id": "protein", "name": "Protein / Main Dish", "targetContributors": 5 },
+    { "id": "starches", "name": "Starches", "targetContributors": 3 },
+    { "id": "vegetables", "name": "Vegetables", "targetContributors": 4 },
+    { "id": "fruit", "name": "Fruit", "targetContributors": 3 },
+    { "id": "sides", "name": "Other Sides", "targetContributors": 5 },
+    { "id": "drinks", "name": "Drinks", "targetContributors": 3 },
+    { "id": "desserts", "name": "Desserts", "targetContributors": 3 }
+  ]
+}
