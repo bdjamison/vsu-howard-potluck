@@ -1,3 +1,4 @@
+
 const $ = id => document.getElementById(id);
 
 const EVENTS = {
@@ -17,7 +18,7 @@ const EVENTS = {
     title: 'KAPPA PHI LAMBDA',
     subtitle: 'Holiday Dinner 2026',
     date: 'Saturday, December 19 • 5:00–9:00 PM',
-    location: "The Sheppard's Home • Detailed address shared privately",
+    location: "The Sheppard's Home — Detailed address shared privately",
     attendees: 50,
     primary: '#111111',
     secondary: '#C5A253',
@@ -313,8 +314,6 @@ if (applyEvent()) {
       $('dish').value = '';
       $('notes').value = '';
       $('servings').value = String(event.attendees);
-      const servingHint = document.querySelector('#servings')?.nextElementSibling;
-      if (servingHint) servingHint.textContent = `${event.attendees} is a planning suggestion, not a requirement. Coordinate quantities based on your dish.`;
 
       await load();
 

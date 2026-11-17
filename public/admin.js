@@ -270,6 +270,7 @@ function render() {
 
     records.append(box);
   }
+
 }
 
 async function decide(row, action, textConfirmed = false) {
@@ -384,7 +385,9 @@ function renderOverview(rows) {
   const attendeeBody = $('attendeeRows');
   attendeeBody.replaceChildren();
 
-  const active = roster.sort((a, b) => a.name.localeCompare(b.name));
+  const active = [...roster].sort(
+    (a, b) => a.name.localeCompare(b.name)
+  );
 
   if (!active.length) {
     const tr = el('tr');
@@ -398,13 +401,17 @@ function renderOverview(rows) {
     const tr = el('tr');
     const n = Number(r.attendees) || 1;
 
-    for (const value of [
+    const values = [
       r.name,
       Math.max(0, n - 1),
       n,
-      r.contributions.map(c => c.dish + ' (' + c.servings + ')').join('; '),
+      r.contributions
+        .map(c => `${c.dish} (${c.servings})`)
+        .join('; '),
       r.status
-    ]) {
+    ];
+
+    for (const value of values) {
       tr.append(el('td', '', value));
     }
 
@@ -420,34 +427,43 @@ function renderOverview(rows) {
     const t = Number(c.target) || 0;
 
     const card = el('div', 'food-category');
+
     card.append(
       el('strong', '', `${c.icon || ''} ${c.name}`),
-      el('p', '', `${a} approved contributor(s) / ${t} minimum • ${p} pending`),
-      el('p', 'hint', `${c.approvedServings || 0} approved portions • ${c.pendingServings || 0} pending portions`)
+      el('p', '',
+        `${a} approved contributor(s) / ` +
+        `${t} minimum • ${p} pending`),
+      el('p', 'hint',
+        `${c.approvedServings || 0} approved portions • ` +
+        `${c.pendingServings || 0} pending portions`)
     );
 
     const track = el('div', 'board-track');
     const fill = el('div', 'board-fill');
-    fill.style.width = `${t ? Math.min(100, a / t * 100) : 0}%`;
+
+    fill.style.width =
+      `${t ? Math.min(100, a / t * 100) : 0}%`;
+
     track.append(fill);
     card.append(track);
 
-    card.append(
-      el('small', '',
-        a > t
-          ? `${a - t} additional contributor(s) — more welcome`
-          : a === t
-            ? 'Contributor goal met — more welcome'
-            : `${t - a} more contributor(s) suggested`)
-    );
+    const message =
+      a > t
+        ? `${a - t} additional contributor(s) — more welcome`
+        : a === t
+          ? 'Contributor goal met — more welcome'
+          : `${t - a} more contributor(s) suggested`;
 
+    card.append(el('small', '', message));
     food.append(card);
   }
 
   const foodBody = $('foodRows');
   foodBody.replaceChildren();
 
-  const activeContributions = rows.filter(r => ['approved', 'pending'].includes(r.status));
+  const activeContributions = rows.filter(
+    r => ['approved', 'pending'].includes(r.status)
+  );
 
   if (!activeContributions.length) {
     const tr = el('tr');
@@ -459,7 +475,10 @@ function renderOverview(rows) {
 
   for (const r of activeContributions) {
     const tr = el('tr');
-    const category = (data.categories || []).find(c => c.id === r.category);
+
+    const category = (data.categories || []).find(
+      c => c.id === r.category
+    );
 
     for (const value of [
       r.name,
@@ -478,14 +497,20 @@ function renderOverview(rows) {
 document.querySelectorAll('[data-filter]').forEach(b => {
   b.onclick = () => {
     filter = b.dataset.filter;
+
     document.querySelectorAll('[data-filter]').forEach(x => {
-      x.className = x === b ? 'active' : 'secondary';
+      x.className =
+        x === b ? 'active' : 'secondary';
     });
-    render();
+
+    if (data) render();
   };
 });
 
-$('search').addEventListener('input', () => data && render());
+$('search').addEventListener(
+  'input',
+  () => data && render()
+);
 
 selectEvent();
 refresh();
